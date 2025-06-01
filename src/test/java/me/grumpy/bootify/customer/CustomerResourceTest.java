@@ -29,16 +29,32 @@ public class CustomerResourceTest extends BaseIT {
 
     @Test
     @Sql("/data/customerData.sql")
-    void getAllCustomers_filtered() {
+    void getAllCustomers_filtered_id() {
         RestAssured
                 .given()
                     .accept(ContentType.JSON)
                 .when()
-                    .get("/api/customers?filter=1001")
+                    .queryParam("search", "id==1001")
+                    .get("/api/customers")
                 .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("page.totalElements", Matchers.equalTo(1))
                     .body("content.get(0).id", Matchers.equalTo(1001));
+    }
+
+    @Test
+    @Sql("/data/customerData.sql")
+    void getAllCustomers_filtered_partial_email_ignore_case() {
+        RestAssured
+                .given()
+                    .accept(ContentType.JSON)
+                .when()
+                    .queryParam("search", "email=ilike=Ipsum")
+                    .get("/api/customers")
+                .then()
+                    .statusCode(HttpStatus.OK.value())
+                    .body("page.totalElements", Matchers.equalTo(1))
+                    .body("content.get(0).email", Matchers.equalTo("Lorem ipsum dolor."));
     }
 
     @Test

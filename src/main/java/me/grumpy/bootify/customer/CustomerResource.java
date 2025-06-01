@@ -31,9 +31,9 @@ public class CustomerResource {
 
     @GetMapping
     public ResponseEntity<Page<CustomerDTO>> getAllCustomers(
-            @RequestParam(name = "filter", required = false) final String filter,
+            @RequestParam(name = "search", required = false) final String search,
             @SortDefault(sort = "id") @PageableDefault(size = 20) final Pageable pageable) {
-        return ResponseEntity.ok(customerService.findAll(filter, pageable));
+        return ResponseEntity.ok(customerService.findAll(search, pageable));
     }
 
     @GetMapping("/{id}")
