@@ -76,7 +76,8 @@ public class CustomerResourceTest extends BaseIT {
                 .when()
                     .post("/api/customers")
                 .then()
-                    .statusCode(HttpStatus.CREATED.value());
+                    .statusCode(HttpStatus.CREATED.value())
+                    .header("Location", Matchers.is(Matchers.not(Matchers.emptyString())));
         assertEquals(1, customerRepository.count());
     }
 
@@ -91,7 +92,8 @@ public class CustomerResourceTest extends BaseIT {
                 .when()
                     .put("/api/customers/1000")
                 .then()
-                    .statusCode(HttpStatus.OK.value());
+                    .statusCode(HttpStatus.NO_CONTENT.value())
+                    .header("Location", Matchers.is(Matchers.not(Matchers.emptyString())));
         assertEquals("No sea takimata.", customerRepository.findById(((long)1000)).orElseThrow().getFirstName());
         assertEquals(2, customerRepository.count());
     }

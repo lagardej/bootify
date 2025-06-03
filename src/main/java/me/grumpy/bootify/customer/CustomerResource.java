@@ -5,7 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,6 +17,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.net.URI;
+
+import static org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder.fromMethodCall;
+import static org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder.on;
 
 
 @RestController
@@ -42,22 +47,28 @@ public class CustomerResource {
     }
 
     @PostMapping
-    public ResponseEntity<Long> createCustomer(@RequestBody @Valid final CustomerDTO customerDTO) {
+    public ResponseEntity<Void> createCustomer(@RequestBody @Valid final CustomerDTO customerDTO) {
         final Long createdId = customerService.create(customerDTO);
-        return new ResponseEntity<>(createdId, HttpStatus.CREATED);
+        URI location = getCustomerUri(createdId);
+        return ResponseEntity.created(location).build();
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Long> updateCustomer(@PathVariable(name = "id") final Long id,
+    public ResponseEntity<Void> updateCustomer(@PathVariable(name = "id") final Long id,
             @RequestBody @Valid final CustomerDTO customerDTO) {
         customerService.update(id, customerDTO);
-        return ResponseEntity.ok(id);
+        URI location = getCustomerUri(id);
+        return ResponseEntity.noContent().header(HttpHeaders.LOCATION, location.toString()).build();
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCustomer(@PathVariable(name = "id") final Long id) {
         customerService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    private static URI getCustomerUri(Long id) {
+        return fromMethodCall(on(CustomerResource.class).getCustomer(id)).build().toUri();
     }
 
 }
