@@ -1,9 +1,11 @@
 package me.grumpy.bootify.customer;
 
+import io.github.perplexhub.rsql.RSQLJPASupport;
 import me.grumpy.bootify.util.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 
@@ -19,19 +21,9 @@ public class CustomerService {
         this.customerMapper = customerMapper;
     }
 
-    public Page<CustomerDTO> findAll(final String filter, final Pageable pageable) {
-        Page<Customer> page;
-        if (filter != null) {
-            Long longFilter = null;
-            try {
-                longFilter = Long.parseLong(filter);
-            } catch (final NumberFormatException numberFormatException) {
-                // keep null - no parseable input
-            }
-            page = customerRepository.findAllById(longFilter, pageable);
-        } else {
-            page = customerRepository.findAll(pageable);
-        }
+    public Page<CustomerDTO> findAll(final String search, final Pageable pageable) {
+        Specification<Customer> specification = RSQLJPASupport.toSpecification(search);
+        Page<Customer> page = customerRepository.findAll(specification, pageable);
         return new PageImpl<>(page.getContent()
                 .stream()
                 .map(customer -> customerMapper.updateCustomerDTO(customer, new CustomerDTO()))

@@ -1,12 +1,8 @@
 package me.grumpy.bootify.customer;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 
-public interface CustomerRepository extends JpaRepository<Customer, Long> {
-
-    Page<Customer> findAllById(Long id, Pageable pageable);
-
+public interface CustomerRepository extends JpaRepository<Customer, Long>, JpaSpecificationExecutor<Customer> {
 }
