@@ -21,6 +21,10 @@ repositories {
     mavenCentral()
 }
 
+configurations {
+    mockitoAgent
+}
+
 dependencies {
     implementation('org.springframework.boot:spring-boot-starter-web')
     implementation('org.springframework.boot:spring-boot-starter-validation')
@@ -36,8 +40,13 @@ dependencies {
     annotationProcessor('org.projectlombok:lombok-mapstruct-binding:0.2.0')
     testImplementation('org.springframework.boot:spring-boot-starter-test')
     testImplementation('io.rest-assured:rest-assured')
+
+    mockitoAgent('org.mockito:mockito-core') {
+        transitive = false
+    }
 }
 
-tasks.withType(Test) {
+tasks.withType(Test).configureEach {
     useJUnitPlatform()
+    jvmArgs += "-javaagent:${configurations.mockitoAgent.asPath}"
 }
