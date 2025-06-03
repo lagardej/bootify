@@ -34,14 +34,14 @@ public class CustomerService {
         }
         return new PageImpl<>(page.getContent()
                 .stream()
-                .map(customer -> customerMapper.updateCustomerDTO(customer, new CustomerDTO()))
+                .map(customerMapper::toDto)
                 .toList(),
                 pageable, page.getTotalElements());
     }
 
     public CustomerDTO get(final Long id) {
         return customerRepository.findById(id)
-                .map(customer -> customerMapper.updateCustomerDTO(customer, new CustomerDTO()))
+                .map(customerMapper::toDto)
                 .orElseThrow(NotFoundException::new);
     }
 

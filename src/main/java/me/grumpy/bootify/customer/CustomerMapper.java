@@ -13,7 +13,7 @@ import org.mapstruct.ReportingPolicy;
 )
 public interface CustomerMapper {
 
-    CustomerDTO updateCustomerDTO(Customer customer, @MappingTarget CustomerDTO customerDTO);
+    CustomerDTO toDto(Customer customer);
 
     @Mapping(target = "id", ignore = true)
     Customer updateCustomer(CustomerDTO customerDTO, @MappingTarget Customer customer);
